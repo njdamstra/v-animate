@@ -1,0 +1,46 @@
+{
+  "name": "@njdamstra/v-animate",
+  "version": "0.1.0",
+  "description": "Vue 3 animation composable with plugin-based architecture",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/njdamstra/v-animate.git"
+  },
+  "keywords": ["vue", "vue3", "animation", "composable", "web-animations"],
+  "author": "njdamstra",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "^3.3.0",
+    "@vueuse/core": "^10.0.0 || ^11.0.0 || ^12.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vue": "^3.5.0",
+    "@vueuse/core": "^12.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
+  }
+}
