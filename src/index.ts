@@ -13,6 +13,9 @@ export { useEnvironment, createAutoPauseWatcher } from './composables/useEnviron
 export { createAnimation } from './createAnimation'
 export type { CreateAnimationOptions, CreateAnimationReturn } from './createAnimation'
 
+// RAF coordination utilities
+export { createRafControls, type RafControls } from './rafCoordinator'
+
 // Presets
 export { animationPresets } from './presets'
 export type { AnimationPreset, AnimationPresetKey } from './presets'

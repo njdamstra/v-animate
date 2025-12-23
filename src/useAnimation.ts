@@ -75,6 +75,59 @@ export interface UseAnimationLifecycleOptions {
 // Type interfaces have moved to types/core.ts and are re-exported via ./types.
 
 // ===============================
+// SSR DETECTION & STUB
+// ===============================
+const isServer = typeof window === 'undefined'
+
+/**
+ * Creates a no-op stub for SSR environments.
+ * Returns the same API shape as the full implementation but with no-op functions.
+ * This prevents unnecessary work on the server and avoids SSR hydration issues.
+ */
+function createSSRStub<T = any, TElement = any>(): UseAnimationReturn<T, TElement> {
+  const noop = () => {}
+  const noopAsync = async () => {}
+  const falseRef = ref(false)
+  const trueRef = computed(() => true)
+  const highQuality = computed(() => 'high' as AnimationQuality)
+
+  return {
+    // Core lifecycle - no-ops
+    play: noopAsync,
+    pause: noop,
+    stop: noop,
+    resume: noop,
+
+    // Core state - safe defaults
+    isPlaying: falseRef,
+    isPaused: falseRef,
+    state: {} as T,
+
+    // Events - no-ops
+    emit: noop,
+    on: () => noop,
+
+    // Environment - optimistic defaults (will be recalculated on client)
+    canAnimate: trueRef,
+    animationQuality: highQuality,
+    shouldPauseAnimations: computed(() => false),
+
+    // Optional plugin APIs - undefined (matches type)
+    animate: ref(undefined),
+    animateIn: noopAsync,
+    animateOut: noopAsync,
+
+    // CSS Variables - no-ops
+    setCSSVar: noop,
+    getCSSVar: () => '',
+    syncCSSVars: () => noop,
+
+    // Cleanup - no-op
+    cleanup: noop,
+  } as UseAnimationReturn<T, TElement>
+}
+
+// ===============================
 // GLOBAL PLUGIN REGISTRY SETUP
 // ===============================
 // CORE plugins - always registered at startup
@@ -128,6 +181,13 @@ export function useAnimation<T = any, TElement = any>(
   target: MaybeRefOrGetter<HTMLElement | undefined>,
   options: UseAnimationOptions<T> = {}
 ): UseAnimationReturn<T, TElement> {
+  // ===============================
+  // SSR GUARD - Return no-op stub on server
+  // ===============================
+  if (isServer) {
+    return createSSRStub<T, TElement>()
+  }
+
   // ===============================
   // CONTEXT CREATION
   // ===============================
